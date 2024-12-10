@@ -11,6 +11,8 @@ import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
 import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
+import com.yucheng.ycbtsdk.YCBTClient;
+import com.yucheng.ycbtsdk.utils.YCBTLog
 
 class MainApplication : Application(), ReactApplication {
 
@@ -20,6 +22,7 @@ class MainApplication : Application(), ReactApplication {
             PackageList(this).packages.apply {
               // Packages that cannot be autolinked yet can be added manually here, for example:
               // add(MyReactNativePackage())
+              add(NativeLocalStoragePackage())
             }
 
         override fun getJSMainModuleName(): String = "index"
@@ -35,10 +38,24 @@ class MainApplication : Application(), ReactApplication {
 
   override fun onCreate() {
     super.onCreate()
+    initializeYCBTClient()
     SoLoader.init(this, OpenSourceMergedSoMapping)
     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
       // If you opted-in for the New Architecture, we load the native entry point for this app.
       load()
     }
+  }
+  private fun initializeYCBTClient() {
+    // Initialize the YCBTClient SDK with debugging enabled
+    try {
+      // Ensure the library and classes are available
+      YCBTClient.initClient(this, true, BuildConfig.DEBUG)
+  } catch (e: ClassNotFoundException) {
+      YCBTLog.e("YCBTClient Initialization Failed: ${e.stackTrace}")
+  } catch (e: NoClassDefFoundError) {
+      YCBTLog.e("Required class not found: ${e.stackTrace}")
+  } catch (e: Exception) {
+      YCBTLog.e("Unexpected error during YCBTClient initialization: ${e.stackTrace}")
+  }
   }
 }
