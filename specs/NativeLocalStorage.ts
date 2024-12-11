@@ -10,6 +10,8 @@ export interface Spec extends TurboModule {
   connectDevice(macAddress: string): Promise<string>;
   disconnectDevice(): Promise<string>;
   fetchHealthData(dataType: string): Promise<any>;
+  deleteHealthData(dataType: string): Promise<any>;
+  reconnectBle():Promise<any>
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>(
